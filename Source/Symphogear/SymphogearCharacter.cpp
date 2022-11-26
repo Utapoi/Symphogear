@@ -9,6 +9,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Kismet/GameplayStatics.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -30,7 +31,7 @@ ASymphogearCharacter::ASymphogearCharacter()
 
 	// Note: For faster iteration times these variables, and many more, can be tweaked in the Character Blueprint
 	// instead of recompiling to adjust them
-	GetCharacterMovement()->JumpZVelocity = 700.f;
+	GetCharacterMovement()->JumpZVelocity = 400.f;
 	GetCharacterMovement()->AirControl = 0.35f;
 	GetCharacterMovement()->MaxWalkSpeed = 500.f;
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
@@ -84,6 +85,24 @@ void ASymphogearCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 		//Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASymphogearCharacter::Look);
 
+		//Parry
+		EnhancedInputComponent->BindAction(ParryAction, ETriggerEvent::Triggered, this, &ASymphogearCharacter::Parry);
+
+		//Dodge
+		EnhancedInputComponent->BindAction(DodgeAction, ETriggerEvent::Triggered, this, &ASymphogearCharacter::Dodge);
+
+		//Dash
+		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Triggered, this, &ASymphogearCharacter::Dash);
+		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Completed, this, &ASymphogearCharacter::StopDash);
+
+		//Light Attack
+		EnhancedInputComponent->BindAction(LightAttackAction, ETriggerEvent::Triggered, this, &ASymphogearCharacter::LightAttack);
+
+		//Heavy Attack
+		EnhancedInputComponent->BindAction(HeavyAttackAction, ETriggerEvent::Triggered, this, &ASymphogearCharacter::HeavyAttack);
+
+		//Interact with Character
+		EnhancedInputComponent->BindAction(InteractWithCharacterAction, ETriggerEvent::Triggered, this, &ASymphogearCharacter::InteractWithCharacter);
 	}
 
 }
@@ -124,6 +143,48 @@ void ASymphogearCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
+void ASymphogearCharacter::Parry()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, TEXT("PARRY"));
+}
 
+void ASymphogearCharacter::Dodge()
+{
+	FVector DodgeDirection = GetActorForwardVector();
 
+	DodgeDirection.Normalize();
 
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("DODGE: " + DodgeDirection.ToString()));
+}
+
+void ASymphogearCharacter::Dash()
+{
+	bPressedDash = true;
+
+	// find out which way is forward
+	FVector ForwardDirection = GetActorRotation().Vector();
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, TEXT("DASH: " + ForwardDirection.ToString()));
+
+	LaunchCharacter(ForwardDirection * 45 /*Distance*/ * 150 /*Speed*/, true, true);
+}
+
+void ASymphogearCharacter::StopDash()
+{
+	bPressedDash = false;
+}
+
+void ASymphogearCharacter::LightAttack(const FInputActionValue& Value)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("LIGHT ATTACK"));
+}
+
+void ASymphogearCharacter::HeavyAttack(const FInputActionValue& Value)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("HEAVY ATTACK"));
+}
+
+void ASymphogearCharacter::InteractWithCharacter()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Purple, TEXT("INTERACT WITH CHARACTER"));
+}

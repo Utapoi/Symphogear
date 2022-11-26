@@ -37,6 +37,30 @@ class ASymphogearCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* LookAction;
 
+	/** Parry Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* ParryAction;
+
+	/** Dodge Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* DodgeAction;
+
+	/** Dash Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* DashAction;
+
+	/** Light Attack Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* LightAttackAction;
+
+	/** Heavy Attack Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* HeavyAttackAction;
+
+	/** Interact With Character Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* InteractWithCharacterAction;
+
 public:
 	ASymphogearCharacter();
 	
@@ -48,7 +72,19 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
+
+	void Parry();
+
+	void Dodge();
+
+	void Dash();
+	void StopDash();
+
+	void LightAttack(const FInputActionValue& Value);
 			
+	void HeavyAttack(const FInputActionValue& Value);
+
+	void InteractWithCharacter();
 
 protected:
 	// APawn interface
@@ -62,5 +98,10 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+public:
+	/** When true, player wants to dash */
+	UPROPERTY(BlueprintReadOnly, Category = Character)
+	uint32 bPressedDash : 1;
 };
 
