@@ -1,6 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "SymphogearCharacter.h"
+#include "Animation/AnimMontage.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
@@ -177,6 +178,11 @@ void ASymphogearCharacter::StopDash()
 void ASymphogearCharacter::LightAttack(const FInputActionValue& Value)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("LIGHT ATTACK"));
+
+	if (PunchRightAnimationMontage != nullptr)
+	{
+		PlayAnimMontage(PunchRightAnimationMontage);
+	}
 }
 
 void ASymphogearCharacter::HeavyAttack(const FInputActionValue& Value)
